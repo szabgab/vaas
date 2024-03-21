@@ -7,20 +7,23 @@ require_relative '../lib/vaas/resource_owner_password_grant_authenticator'
 require_relative '../lib/vaas/vaas_main'
 
 # # test locally with .env file (comment this when push)
-# require 'dotenv'
-# Dotenv.load
-# CLIENT_ID = ENV['CLIENT_ID']
-# CLIENT_SECRET = ENV['CLIENT_SECRET']
-# TOKEN_URL = ENV['TOKEN_URL']
-# VAAS_URL = ENV['VAAS_URL']
-
-# automatic test (need this when push)
-CLIENT_ID = ENV.fetch('CLIENT_ID')
-CLIENT_SECRET = ENV.fetch('CLIENT_SECRET')
-TOKEN_URL = ENV.fetch('TOKEN_URL')
-VAAS_URL = ENV.fetch('VAAS_URL')
-USER_NAME = ENV.fetch('VAAS_USER_NAME')
-PASSWORD = ENV.fetch('VAAS_PASSWORD')
+if File.exist?(".env")
+  require 'dotenv'
+  Dotenv.load
+  CLIENT_ID = ENV.fetch('CLIENT_ID')
+  CLIENT_SECRET = ENV.fetch('CLIENT_SECRET')
+  TOKEN_URL = ENV.fetch('TOKEN_URL')
+  VAAS_URL = ENV.fetch('VAAS_URL')
+  USER_NAME = ENV.fetch('VAAS_USER_NAME')
+  PASSWORD = ENV.fetch('VAAS_PASSWORD')
+else 
+    CLIENT_ID = ENV.fetch('CLIENT_ID')
+    CLIENT_SECRET = ENV.fetch('CLIENT_SECRET')
+    TOKEN_URL = ENV.fetch('TOKEN_URL')
+    VAAS_URL = ENV.fetch('VAAS_URL')
+    USER_NAME = ENV.fetch('VAAS_USER_NAME')
+    PASSWORD = ENV.fetch('VAAS_PASSWORD')
+end
 
 class VaasTest < Minitest::Test
   TEST_CLASS = self

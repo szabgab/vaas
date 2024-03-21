@@ -21,4 +21,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "minitest", '~> 5.17.0'
   s.add_development_dependency 'dotenv', '~> 2.8.1'
+  s.add_development_dependency 'yarp', '~> 0.13.0'
+  s.add_development_dependency 'rake', '~> 13.1.0'
 end
