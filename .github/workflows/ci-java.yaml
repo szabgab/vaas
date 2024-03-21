@@ -36,7 +36,7 @@ env:
 
 jobs:
   build-java:
-    name: Build & Test Java SDK
+    name: Build & Test Java 17 SDK
     runs-on: ubuntu-20.04
 
     steps:
@@ -134,12 +134,12 @@ jobs:
           MAVEN_CENTRAL_BEARER_TOKEN: ${{ secrets.MAVEN_CENTRAL_BEARER_TOKEN }}
         working-directory: java/build/repos/releases
         run: |
+          rm -rf de/gdata/vaas/*.xml*
           zip -r package.zip .
           curl --fail \
-          --request POST \
-            --header 'Authorization: Bearer ${MAVEN_CENTRAL_BEARER_TOKEN}' \
+            --header "Authorization: Bearer ${MAVEN_CENTRAL_BEARER_TOKEN}" \
             --form bundle=@package.zip \
-            https://central.sonatype.com/api/v1/publisher/upload
+            https://central.sonatype.com/api/v1/publisher/upload?publishingType=AUTOMATIC
 
       - name: Microsoft Teams Notification
         uses: skitionek/notify-microsoft-teams@master
