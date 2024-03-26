@@ -8,6 +8,8 @@ require 'digest'
 require 'protocol/http/body/file'
 require 'uri'
 
+require_relative 'verdict_request'
+require_relative 'verdict_request_for_url'
 require_relative 'vaas_verdict'
 require_relative 'vaas_errors'
 
@@ -88,16 +90,12 @@ module VAAS
       @websocket&.close
     end
 
-    def for_sha256(sha256)
+    def for_sha256(sha256, guid = SecureRandom.uuid.to_s)
       Async do |task|
         task.with_timeout(@timeout) do
           verdict_notification = Async::Notification.new
-          guid = SecureRandom.uuid.to_s
           websocket = get_authenticated_websocket
-          verdict_request =  JSON.generate({:kind => "VerdictRequest",
-                                            :session_id => @session_id,
-                                            :sha256 => sha256,
-                                            :guid => guid})
+          verdict_request = JSON.generate(VerdictRequest.new(sha256, @session_id, guid))
           @requests[guid] = verdict_notification
           websocket.write(verdict_request)
           websocket.flush
@@ -109,16 +107,12 @@ module VAAS
       end
     end
 
-    def for_url(url)
+    def for_url(url, guid = SecureRandom.uuid.to_s)
       Async do |task|
         task.with_timeout(@timeout) do
           verdict_notification = Async::Notification.new
-          guid = SecureRandom.uuid.to_s
           websocket = get_authenticated_websocket
-          verdict_request =  JSON.generate({:kind => "VerdictRequestForUrl",
-                                            :session_id => @session_id,
-                                            :url => url,
-                                            :guid => guid})
+          verdict_request = JSON.generate(VerdictRequestForUrl.new(url, @session_id, guid))
           @requests[guid] = verdict_notification
           websocket.write(verdict_request)
           websocket.flush
@@ -130,17 +124,13 @@ module VAAS
       end
     end
 
-    def for_file(path)
+    def for_file(path, guid = SecureRandom.uuid.to_s)
       Async do |task|
         task.with_timeout(@timeout) do
           sha256 = Digest::SHA256.file(path).hexdigest
           verdict_notification = Async::Notification.new
-          guid = SecureRandom.uuid.to_s
           websocket = get_authenticated_websocket
-          verdict_request =  JSON.generate({:kind => "VerdictRequest",
-                                            :session_id => @session_id,
-                                            :sha256 => sha256,
-                                            :guid => guid})
+          verdict_request = JSON.generate(VerdictRequest.new(sha256, @session_id, guid))
           @requests[guid] = verdict_notification
           websocket.write(verdict_request)
           websocket.flush
